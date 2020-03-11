@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Send data to Pardot from ferretone's form.
+Outputs:
+  VPCLinkBlah:
+    Description: Blah from the vpclink response
+    Value:
+      Fn::GetAtt:
+      - VPCLink
+      - blah
+Resources:
+  VPCLink:
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+        - VPCLinkTestFunction
+        - Arn
+      loglevel: debug
+    Type: Custom::VPCLink
+  VPCLinkTestFunction:
+    Properties:
+      CodeUri: s3://aws-sam-195702235524/a7bb85a6cf48723d38bf7a62a77cca06
+      Handler: main.handler
+      Runtime: python2.7
+    Type: AWS::Serverless::Function
+  VPCLinkTestFunctionExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Sid: AllowLambdaServiceToAssumeRole
+        Version: '2012-10-17'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+    Type: AWS::IAM::Role
+Transform: AWS::Serverless-2016-10-31
